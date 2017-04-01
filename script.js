@@ -1,6 +1,13 @@
 var board;
 var game = new Chess();
 
+// the "AI"
+var calculateBestMove = function(possibleMoves) {
+    var randomIndex = Math.floor(Math.random() * possibleMoves.length);
+
+    return possibleMoves[randomIndex];
+};
+
 // do not pick up pieces if the game is over
 // only pick up pieces for White
 var onDragStart = function(source, piece, position, orientation) {
@@ -16,8 +23,9 @@ var makeRandomMove = function() {
     // game over
     if (possibleMoves.length === 0) return;
 
-    var randomIndex = Math.floor(Math.random() * possibleMoves.length);
-    game.move(possibleMoves[randomIndex]);
+    var bestMove = calculateBestMove(possibleMoves);
+
+    game.move(bestMove);
     board.position(game.fen());
 };
 
