@@ -1,7 +1,5 @@
-var board,
-    game = new Chess(),
-    statusEl = $('#status'),
-    pgnEl = $('#pgn');
+var board;
+var game = new Chess();
 
 // do not pick up pieces if the game is over
 // only pick up pieces for White
@@ -74,8 +72,8 @@ var updateStatus = function() {
         }
     }
 
-    statusEl.html(status);
-    pgnEl.html(game.pgn());
+    $('#status').html(status);
+    $('#pgn').html(game.pgn());
 };
 
 var cfg = {
@@ -85,6 +83,12 @@ var cfg = {
     onDrop: onDrop,
     onSnapEnd: onSnapEnd
 };
-board = ChessBoard('board', cfg);
 
+board = ChessBoard('board', cfg);
 updateStatus();
+
+$('#startBtn').on('click', function() {
+    game.reset();
+    board.start(true);
+    updateStatus();
+});
