@@ -1,5 +1,7 @@
 var board,
-    game = new Chess();
+    game = new Chess(),
+    statusEl = $('#status'),
+    pgnEl = $('#pgn');
 
 // do not pick up pieces if the game is over
 // only pick up pieces for White
@@ -32,6 +34,8 @@ var onDrop = function(source, target) {
     // illegal move
     if (move === null) return 'snapback';
 
+    updateStatus();
+
     // make random legal move for black
     window.setTimeout(makeRandomMove, 250);
 };
@@ -42,6 +46,38 @@ var onSnapEnd = function() {
     board.position(game.fen());
 };
 
+var updateStatus = function() {
+    var status = '';
+
+    var moveColor = 'White';
+    if (game.turn() === 'b') {
+        moveColor = 'Black';
+    }
+
+    // checkmate?
+    if (game.in_checkmate() === true) {
+        status = 'Game over, ' + moveColor + ' is in checkmate.';
+    }
+
+    // draw?
+    else if (game.in_draw() === true) {
+        status = 'Game over, drawn position';
+    }
+
+    // game still on
+    else {
+        status = moveColor + ' to move';
+
+        // check?
+        if (game.in_check() === true) {
+            status += ', ' + moveColor + ' is in check';
+        }
+    }
+
+    statusEl.html(status);
+    pgnEl.html(game.pgn());
+};
+
 var cfg = {
     draggable: true,
     position: 'start',
@@ -50,3 +86,5 @@ var cfg = {
     onSnapEnd: onSnapEnd
 };
 board = ChessBoard('board', cfg);
+
+updateStatus();
