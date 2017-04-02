@@ -3,9 +3,65 @@ var game = new Chess();
 
 // the "AI"
 var calculateBestMove = function(possibleMoves) {
-    var randomIndex = Math.floor(Math.random() * possibleMoves.length);
 
-    return possibleMoves[randomIndex];
+    var bestMoves = [];
+    var bestValue = -999;
+
+    for (var i = 0; i < possibleMoves.length; i++) {
+        var newGameMove = possibleMoves[i];
+        game.move(newGameMove);
+
+        //take the negative as AI plays as black
+        var boardValue = -evaluateBoard(game.board());
+        game.undo();
+
+        if (boardValue > bestValue) {
+            bestValue = boardValue;
+            bestMoves = [newGameMove];
+        } else if (boardValue === bestValue) {
+            bestMoves.push(newGameMove);
+        }
+    }
+
+    var randomIndex = Math.floor(Math.random() * bestMoves.length);
+
+    return bestMoves[randomIndex];
+};
+
+var evaluateBoard = function(board) {
+    var totalEvaluation = 0;
+    for (var i = 0; i < 8; i++) {
+        for (var j = 0; j < 8; j++) {
+            totalEvaluation = totalEvaluation + getPieceValue(board[i][j]);
+        }
+    }
+
+    return totalEvaluation;
+};
+
+var getPieceValue = function (piece) {
+    if (piece === null) {
+        return 0;
+    }
+    var getAbsoluteValue = function (piece) {
+        if (piece.type === 'p') {
+            return 1;
+        } else if (piece.type === 'r') {
+            return 5;
+        } else if (piece.type === 'n') {
+            return 3;
+        } else if (piece.type === 'b') {
+            return 3 ;
+        } else if (piece.type === 'q') {
+            return 9;
+        } else if (piece.type === 'k') {
+            return 100;
+        }
+        throw "Unknown piece type: " + piece.type;
+    };
+
+    var absoluteValue = getAbsoluteValue(piece);
+    return piece.color === 'w' ? absoluteValue : -absoluteValue;
 };
 
 // do not pick up pieces if the game is over
