@@ -69,7 +69,7 @@ var getPieceValue = function (piece) {
 // do not pick up pieces if the game is over
 // only pick up pieces for White
 var onDragStart = function(source, piece, position, orientation) {
-    if (game.in_checkmate() === true || game.in_draw() === true ||
+    if (game.in_checkmate() || game.in_draw() ||
         piece.search(/^b/) !== -1) {
         return false;
     }
@@ -87,7 +87,7 @@ var makeComputerMove = function() {
     board.position(game.fen());
     updateStatus();
 
-    if (isCompVsComp) {
+    if (isCompVsComp && !game.in_checkmate() && !game.in_draw() && !game.in_stalemate()) {
         window.setTimeout(makeComputerMove, 250);
     }
 };
@@ -118,26 +118,17 @@ var onSnapEnd = function() {
 var updateStatus = function() {
     var status = '';
 
-    var moveColor = 'White';
-    if (game.turn() === 'b') {
-        moveColor = 'Black';
-    }
+    var moveColor = game.turn() === 'w' ? 'White' : 'Black';
 
-    // checkmate?
-    if (game.in_checkmate() === true) {
+    if (game.in_checkmate()) {
         status = 'Game over, ' + moveColor + ' is in checkmate.';
-    }
-
-    // draw?
-    else if (game.in_draw() === true) {
+    } else if (game.in_stalemate()) {
+        status = 'Game over, stalemate';
+    } else if (game.in_draw()) {
         status = 'Game over, drawn position';
-    }
-
-    // game still on
-    else {
+    } else {
         status = moveColor + ' to move';
 
-        // check?
         if (game.in_check() === true) {
             status += ', ' + moveColor + ' is in check';
         }
