@@ -8,9 +8,15 @@
 <body>
     <div id="board" style="width: 400px"></div>
     <p>Status: <span id="status"></span></p>
-    <p>PGN: <span id="pgn"></span></p>
-    <br>
-    <input type="button" id="startBtn" value="New Game" />
+    <p>PGN: <span id="pgn"></span></p><br>
+
+    <input type="button" id="newGame" value="New Game" /><br><br>
+
+    <input type="radio" name="gameType" value="humanVsComp" id="humanVsComp" checked="checked" />
+    <label for="humanVsComp">Human vs AI</label><br>
+
+    <input type="radio" name="gameType" value="compVsComp" id="compVsComp"/>
+    <label for="compVsComp">AI vs AI</label>
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="lib/chessboardjs-0.3.0/js/chessboard-0.3.0.min.js"></script>

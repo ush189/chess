@@ -1,5 +1,6 @@
 var board;
 var game = new Chess();
+var isCompVsComp = false;
 
 // the "AI"
 var calculateBestMove = function(possibleMoves) {
@@ -11,8 +12,7 @@ var calculateBestMove = function(possibleMoves) {
         var newGameMove = possibleMoves[i];
         game.move(newGameMove);
 
-        //take the negative as AI plays as black
-        var boardValue = -evaluateBoard(game.board());
+        var boardValue = evaluateBoard(game.board());
         game.undo();
 
         if (boardValue > bestValue) {
@@ -61,7 +61,9 @@ var getPieceValue = function (piece) {
     };
 
     var absoluteValue = getAbsoluteValue(piece);
-    return piece.color === 'w' ? absoluteValue : -absoluteValue;
+
+    // we are one move ahead, so it needs to be !game.turn()
+    return piece.color !== game.turn() ? absoluteValue : -absoluteValue;
 };
 
 // do not pick up pieces if the game is over
@@ -73,7 +75,7 @@ var onDragStart = function(source, piece, position, orientation) {
     }
 };
 
-var makeRandomMove = function() {
+var makeComputerMove = function() {
     var possibleMoves = game.moves();
 
     // game over
@@ -83,6 +85,11 @@ var makeRandomMove = function() {
 
     game.move(bestMove);
     board.position(game.fen());
+    updateStatus();
+
+    if (isCompVsComp) {
+        window.setTimeout(makeComputerMove, 250);
+    }
 };
 
 var onDrop = function(source, target) {
@@ -99,7 +106,7 @@ var onDrop = function(source, target) {
     updateStatus();
 
     // make random legal move for black
-    window.setTimeout(makeRandomMove, 250);
+    window.setTimeout(makeComputerMove, 250);
 };
 
 // update the board position after the piece snap
@@ -151,8 +158,14 @@ var cfg = {
 board = ChessBoard('board', cfg);
 updateStatus();
 
-$('#startBtn').on('click', function() {
+$('#newGame').on('click', function() {
     game.reset();
     board.start(true);
     updateStatus();
+
+    isCompVsComp = $('input[name="gameType"]:checked').val() === 'compVsComp';
+
+    if (isCompVsComp) {
+        window.setTimeout(makeComputerMove, 250);
+    }
 });
