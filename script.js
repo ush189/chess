@@ -1,8 +1,8 @@
 var board;
 var game = new Chess();
 var isCompVsComp = false;
-var comp1Level;
-var comp2Level;
+var comp1Level = 1;
+var comp2Level = 1;
 var TIMEOUT = 250;
 
 var randomMove = function(possibleMoves) {
@@ -137,14 +137,14 @@ var makeComputerMove = function() {
 
     var bestMove;
     var compLevel = game.turn() === 'w' ? comp1Level : comp2Level;
-    switch (compLevel) {
-        case '1':
+    switch (parseInt(compLevel)) {
+        case 1:
             bestMove = randomMove(possibleMoves);
             break;
-        case '2':
+        case 2:
             bestMove = calculateBestMoveWithBoardEvaluation(possibleMoves);
             break;
-        case '3':
+        case 3:
             bestMove = calculateBestMoveWithMinimax(possibleMoves, 1);
             break;
     }
