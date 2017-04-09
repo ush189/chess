@@ -183,15 +183,19 @@ var onSnapEnd = function() {
 
 var updateStatus = function() {
     var status = '';
+    var elemId;
 
     var moveColor = game.turn() === 'w' ? 'White' : 'Black';
 
     if (game.in_checkmate()) {
         status = 'Game over, ' + moveColor + ' is in checkmate.';
+        elemId = game.turn() === 'w' ? '#blackWins' : '#whiteWins';
     } else if (game.in_stalemate()) {
         status = 'Game over, stalemate';
+        elemId = '#draws';
     } else if (game.in_draw()) {
         status = 'Game over, drawn position';
+        elemId = '#draws';
     } else {
         status = moveColor + ' to move';
 
@@ -202,6 +206,9 @@ var updateStatus = function() {
 
     $('#status').html(status);
     $('#pgn').html(game.pgn());
+
+    var newCounter =  parseInt($(elemId).html()) + 1;
+    $(elemId).html(newCounter);
 };
 
 var cfg = {

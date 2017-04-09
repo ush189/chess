@@ -1,3 +1,27 @@
+.board,
+.stats,
+.controls,
+.pgn {
+    float: left;
+}
+
+.board {
+    margin-right: 50px;
+}
+
+.controls {
+    width: 400px;
+    margin-right: 50px;
+}
+
+.pgn {
+    width: 800px;
+}
+
+.clearfix {
+    clear: both;
+}
+
 fieldset {
     width: 250px;
     margin-bottom: 10px;
