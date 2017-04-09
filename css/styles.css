@@ -1,0 +1,8 @@
+fieldset {
+    width: 250px;
+    margin-bottom: 10px;
+}
+
+#comp1Level {
+    display: none;
+}

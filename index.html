@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Chess AI</title>
+    <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="lib/chessboardjs-0.3.0/css/chessboard-0.3.0.min.css" />
 </head>
 <body>
@@ -12,11 +13,39 @@
 
     <input type="button" id="newGame" value="New Game" /><br><br>
 
-    <input type="radio" name="gameType" value="humanVsComp" id="humanVsComp" checked="checked" />
-    <label for="humanVsComp">Human vs AI</label><br>
+    <fieldset>
+        <input type="radio" name="gameType" value="humanVsComp" id="humanVsComp" checked="checked" />
+        <label for="humanVsComp">Human vs AI</label><br>
 
-    <input type="radio" name="gameType" value="compVsComp" id="compVsComp"/>
-    <label for="compVsComp">AI vs AI</label>
+        <input type="radio" name="gameType" value="compVsComp" id="compVsComp"/>
+        <label for="compVsComp">AI vs AI</label>
+    </fieldset>
+
+    <fieldset id="comp1Level">
+        <legend>AI strength for White</legend>
+
+        <input type="radio" name="comp1Level" value="1" id="comp1Level1" checked="checked" />
+        <label for="comp1Level1">Level 1 (random moves)</label><br>
+
+        <input type="radio" name="comp1Level" value="2" id="comp1Level2"/>
+        <label for="comp1Level2">Level 2 (board evaluation)</label><br>
+
+        <input type="radio" name="comp1Level" value="3" id="comp1Level3"/>
+        <label for="comp1Level3">Level 3 (minimax)</label>
+    </fieldset>
+
+    <fieldset>
+        <legend>AI strength for Black</legend>
+
+        <input type="radio" name="comp2Level" value="1" id="comp2Level1" checked="checked" />
+        <label for="comp2Level1">Level 1 (random moves)</label><br>
+
+        <input type="radio" name="comp2Level" value="2" id="comp2Level2"/>
+        <label for="comp2Level2">Level 2 (board evaluation)</label><br>
+
+        <input type="radio" name="comp2Level" value="3" id="comp2Level3"/>
+        <label for="comp2Level3">Level 3 (minimax)</label>
+    </fieldset>
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="lib/chessboardjs-0.3.0/js/chessboard-0.3.0.min.js"></script>

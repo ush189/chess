@@ -1,10 +1,17 @@
 var board;
 var game = new Chess();
 var isCompVsComp = false;
+var comp1Level;
+var comp2Level;
+var TIMEOUT = 250;
 
-// the "AI"
-var calculateBestMove = function(possibleMoves) {
+var randomMove = function(possibleMoves) {
+    var randomIndex = Math.floor(Math.random() * possibleMoves.length);
 
+    return possibleMoves[randomIndex];
+};
+
+var calculateBestMoveWithBoardEvaluation = function(possibleMoves) {
     var bestMoves = [];
     var bestValue = -999;
 
@@ -26,6 +33,53 @@ var calculateBestMove = function(possibleMoves) {
     var randomIndex = Math.floor(Math.random() * bestMoves.length);
 
     return bestMoves[randomIndex];
+};
+
+var calculateBestMoveWithMinimax = function(possibleMoves, depth) {
+    var bestMoves = [];
+    var bestValue = -999;
+
+    for (var i = 0; i < possibleMoves.length; i++) {
+        var newGameMove = possibleMoves[i];
+        game.move(newGameMove);
+
+        var boardValue = -minimax(game.moves(), +1, depth);
+        game.undo();
+
+        if (boardValue > bestValue) {
+            bestValue = boardValue;
+            bestMoves = [newGameMove];
+        } else if (boardValue === bestValue) {
+            bestMoves.push(newGameMove);
+        }
+    }
+
+    var randomIndex = Math.floor(Math.random() * bestMoves.length);
+
+    return bestMoves[randomIndex];
+};
+
+var minimax = function(possibleMoves, player, depth) {
+    if (depth === 0) {
+        return evaluateBoard(game.board());
+    }
+
+    var bestValue = -999;
+
+    for (var i = 0; i < possibleMoves.length; i++) {
+        var newGameMove = possibleMoves[i];
+        game.move(newGameMove);
+        console.log(game.ascii())
+
+        var boardValue = minimax(game.moves(), -player, depth - 1);
+        game.undo();
+
+        if (boardValue > bestValue) {
+            bestValue = boardValue;
+        }
+    }
+
+    return bestValue;
 };
 
 var evaluateBoard = function(board) {
@@ -81,14 +135,26 @@ var makeComputerMove = function() {
     // game over
     if (possibleMoves.length === 0) return;
 
-    var bestMove = calculateBestMove(possibleMoves);
+    var bestMove;
+    var compLevel = game.turn() === 'w' ? comp1Level : comp2Level;
+    switch (compLevel) {
+        case '1':
+            bestMove = randomMove(possibleMoves);
+            break;
+        case '2':
+            bestMove = calculateBestMoveWithBoardEvaluation(possibleMoves);
+            break;
+        case '3':
+            bestMove = calculateBestMoveWithMinimax(possibleMoves, 1);
+            break;
+    }
 
     game.move(bestMove);
     board.position(game.fen());
     updateStatus();
 
     if (isCompVsComp && !game.in_checkmate() && !game.in_draw() && !game.in_stalemate()) {
-        window.setTimeout(makeComputerMove, 250);
+        window.setTimeout(makeComputerMove, TIMEOUT);
     }
 };
 
@@ -106,7 +172,7 @@ var onDrop = function(source, target) {
     updateStatus();
 
     // make random legal move for black
-    window.setTimeout(makeComputerMove, 250);
+    window.setTimeout(makeComputerMove, TIMEOUT);
 };
 
 // update the board position after the piece snap
@@ -155,8 +221,18 @@ $('#newGame').on('click', function() {
     updateStatus();
 
     isCompVsComp = $('input[name="gameType"]:checked').val() === 'compVsComp';
+    comp1Level = $('input[name="comp1Level"]:checked').val();
+    comp2Level = $('input[name="comp2Level"]:checked').val();
 
     if (isCompVsComp) {
-        window.setTimeout(makeComputerMove, 250);
+        window.setTimeout(makeComputerMove, TIMEOUT);
+    }
+});
+
+$('input[name="gameType"]').on('click', function(event) {
+    if (event.currentTarget.value === 'compVsComp') {
+        $('#comp1Level').show();
+    } else {
+        $('#comp1Level').hide();
     }
 });
