@@ -155,6 +155,8 @@ var makeComputerMove = function() {
 
     if (isCompVsComp && !game.in_checkmate() && !game.in_draw() && !game.in_stalemate()) {
         window.setTimeout(makeComputerMove, TIMEOUT);
+    } else if (isCompVsComp && $('#autoplay').is(':checked')) {
+        newGame();
     }
 };
 
@@ -183,19 +185,19 @@ var onSnapEnd = function() {
 
 var updateStatus = function() {
     var status = '';
-    var elemId;
+    var counterId;
 
     var moveColor = game.turn() === 'w' ? 'White' : 'Black';
 
     if (game.in_checkmate()) {
         status = 'Game over, ' + moveColor + ' is in checkmate.';
-        elemId = game.turn() === 'w' ? '#blackWins' : '#whiteWins';
+        counterId = game.turn() === 'w' ? '#blackWins' : '#whiteWins';
     } else if (game.in_stalemate()) {
         status = 'Game over, stalemate';
-        elemId = '#draws';
+        counterId = '#draws';
     } else if (game.in_draw()) {
         status = 'Game over, drawn position';
-        elemId = '#draws';
+        counterId = '#draws';
     } else {
         status = moveColor + ' to move';
 
@@ -207,8 +209,22 @@ var updateStatus = function() {
     $('#status').html(status);
     $('#pgn').html(game.pgn());
 
-    var newCounter =  parseInt($(elemId).html()) + 1;
-    $(elemId).html(newCounter);
+    var newCounter =  parseInt($(counterId).html()) + 1;
+    $(counterId).html(newCounter);
+};
+
+var newGame = function() {
+    game.reset();
+    board.start(true);
+    updateStatus();
+
+    isCompVsComp = $('input[name="gameType"]:checked').val() === 'compVsComp';
+    comp1Level = $('input[name="comp1Level"]:checked').val();
+    comp2Level = $('input[name="comp2Level"]:checked').val();
+
+    if (isCompVsComp) {
+        window.setTimeout(makeComputerMove, TIMEOUT);
+    }
 };
 
 var cfg = {
@@ -222,19 +238,7 @@ var cfg = {
 board = ChessBoard('board', cfg);
 updateStatus();
 
-$('#newGame').on('click', function() {
-    game.reset();
-    board.start(true);
-    updateStatus();
-
-    isCompVsComp = $('input[name="gameType"]:checked').val() === 'compVsComp';
-    comp1Level = $('input[name="comp1Level"]:checked').val();
-    comp2Level = $('input[name="comp2Level"]:checked').val();
-
-    if (isCompVsComp) {
-        window.setTimeout(makeComputerMove, TIMEOUT);
-    }
-});
+$('#newGame').on('click', newGame);
 
 $('input[name="gameType"]').on('click', function(event) {
     if (event.currentTarget.value === 'compVsComp') {
