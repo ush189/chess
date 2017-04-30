@@ -147,6 +147,9 @@ var makeComputerMove = function() {
         case 3:
             bestMove = calculateBestMoveWithMinimax(possibleMoves, 1);
             break;
+        case 4:
+            bestMove = calculateBestMoveWithMinimax(possibleMoves, 2);
+            break;
     }
 
     game.move(bestMove);
